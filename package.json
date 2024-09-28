@@ -1,0 +1,37 @@
+{
+  "name": "chess",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.19.1",
+    "@reduxjs/toolkit": "^2.2.7",
+    "bcryptjs": "^2.4.3",
+    "chess.js": "^1.0.0-beta.8",
+    "chessboardjsx": "^2.4.7",
+    "jsonwebtoken": "^9.0.2",
+    "next": "14.2.13",
+    "next-auth": "^4.24.7",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-redux": "^9.1.2",
+    "socket.io": "^4.8.0",
+    "socket.io-client": "^4.8.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^20.16.5",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "prisma": "^5.19.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.2"
+  }
+}
