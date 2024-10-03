@@ -25,15 +25,45 @@ export default function page() {
     let selectedSquare = turn === "w" ? selectedsquare : selectedBlacksSquare;
 
     if (selectedSquare != null) {
-      const move = chess.move({ from: selectedSquare, to: square });
-      if (move) {
-        dispatch(updatePosition(chess.fen()));
-        dispatch(updatewhoseturn(`IT IS BLACK'S PLAYER TURN NOW `));
-        turn === "w"
-          ? dispatch(updateSquare(null))
-          : dispatch(updateblacksSquare(null));
-      } else {
-        alert("The move is invalid");
+      try {
+        const move = chess.move({ from: selectedSquare, to: square });
+        if (move) {
+          dispatch(updatePosition(chess.fen()));
+          dispatch(
+            updatewhoseturn(
+              turn === "w" ? "IT IS BLACK'S TURN NOW" : "IT IS WHITE'S TURN NOW"
+            )
+          );
+          if (turn === "w") {
+            dispatch(updateSquare(null));
+          } else {
+            dispatch(updateblacksSquare(null));
+          }
+
+          if (chess.isCheckmate()) {
+            alert("The Game Is Over");
+          }
+          if (turn === "w" && chess.isCheck()) {
+            alert("You are in check");
+          }
+          if (turn === "b" && chess.inCheck()) {
+            alert("Please check");
+          }
+          if (chess.isStalemate()) {
+            alert("The game is a draw");
+          }
+          if (chess.isInsufficientMaterial()) {
+            alert("The game is a over");
+          }
+        }
+      } catch (error) {
+        console.log("invalid move made");
+        alert(error);
+        if (turn === "w") {
+          dispatch(updateSquare(null));
+        } else {
+          dispatch(updateblacksSquare(null));
+        }
         return;
       }
     } else {

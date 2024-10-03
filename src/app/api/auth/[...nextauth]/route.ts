@@ -1,7 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
@@ -12,10 +11,6 @@ const handler = NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    }),
-    GitHubProvider({
-      clientId: process.env.GITHUB_ID as string,
-      clientSecret: process.env.GITHUB_SECRET as string,
     }),
     CredentialsProvider({
       id: "credentials",
@@ -39,7 +34,7 @@ const handler = NextAuth({
           const main = async () => {
             const loggedUser = await prisma.user.findUnique({
               where: {
-                username: username,
+                name: username,
                 email: email,
               },
             });
@@ -58,7 +53,7 @@ const handler = NextAuth({
 
             return {
               id: loggedUser.id,
-              name: loggedUser.username,
+              name: loggedUser.name,
               email: loggedUser.email,
             };
           };
@@ -67,7 +62,7 @@ const handler = NextAuth({
           const signupfunction = async () => {
             const signedupUser = await prisma.user.findUnique({
               where: {
-                username: username,
+                name: username,
                 email: email,
               },
             });
@@ -79,7 +74,7 @@ const handler = NextAuth({
             const newpassword = await bcrypt.hash(password, salt);
             const signUser = await prisma.user.create({
               data: {
-                username: username,
+                name: username,
                 email: email,
                 password: newpassword,
               },
@@ -90,7 +85,7 @@ const handler = NextAuth({
             }
             return {
               id: signUser.id,
-              username: signUser.username,
+              username: signUser.name,
               email: signUser.email,
             };
           };
