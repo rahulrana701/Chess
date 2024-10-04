@@ -3,6 +3,11 @@ import positionReducer from "./features/position/positionSlice";
 import squareReducer from "./features/square/squareSlice";
 import blacksSquareReducer from "./features/blacksquare/blacksquareSlice";
 import whoseturnReducer from "./features/whoseturn/whoseturnSlice";
+import playernameReducer from "./features/playername/playernameSlice";
+import roomIdReducer from "./features/roomnumber/roomnumberSlice";
+import boardplayerReducer from "./features/boardplayers/boardplayerSlice";
+import playerSocketReducer from "./features/playersocketId/playersocketIdSlice";
+
 export const makeStore = () => {
   return configureStore({
     reducer: {
@@ -10,6 +15,10 @@ export const makeStore = () => {
       selectedsquare: squareReducer,
       blacksSquarePostion: blacksSquareReducer,
       whoseturn: whoseturnReducer,
+      playername: playernameReducer,
+      roomID: roomIdReducer,
+      boardPlayers: boardplayerReducer,
+      SocketID: playerSocketReducer,
     },
   });
 };

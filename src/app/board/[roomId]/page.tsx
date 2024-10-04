@@ -1,13 +1,16 @@
 "use client";
+
 import Chessboard from "chessboardjsx";
 import React, { useEffect, useState } from "react";
 import { Chess, Square } from "chess.js";
-import { UseSocket } from "../socketprovider";
+import { UseSocket } from "../../socketprovider";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { updateSquare } from "../../lib/features/square/squareSlice";
+import { updateSquare } from "../../../lib/features/square/squareSlice";
 import { updatePosition } from "@/lib/features/position/positionSlice";
 import { updateblacksSquare } from "@/lib/features/blacksquare/blacksquareSlice";
 import { updatewhoseturn } from "@/lib/features/whoseturn/whoseturnSlice";
+import { addplayers } from "@/lib/features/boardplayers/boardplayerSlice";
+import { updateSocketId } from "@/lib/features/playersocketId/playersocketIdSlice";
 
 export default function page() {
   const [chess] = useState(new Chess());
@@ -17,6 +20,8 @@ export default function page() {
   var { selectedBlacksSquare } = useAppSelector(
     (state) => state.blacksSquarePostion
   );
+
+  const { players } = useAppSelector((state) => state.boardPlayers);
   const dispatch = useAppDispatch();
   const socket = UseSocket();
 
@@ -75,6 +80,14 @@ export default function page() {
     }
   }
 
+  useEffect(() => {
+    socket?.on("player-joined", ({ name, players, socketId }) => {
+      console.log(name);
+      dispatch(addplayers(players));
+      dispatch(updateSocketId(socketId));
+    });
+  }, []);
+
   return (
     <div>
       <Chessboard
@@ -82,6 +95,7 @@ export default function page() {
         draggable={true}
         onSquareClick={onSquareClick}
       />
+      {players}
       <h3>{whichturn}</h3>
     </div>
   );

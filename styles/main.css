@@ -95,7 +95,7 @@
   border-radius: 15px;
   border: none;
 }
-.main-page-form button {
+.main-page-form input[type="submit"] {
   margin-top: 1rem;
   margin-bottom: 1rem;
   display: block;
@@ -107,5 +107,11 @@
   cursor: pointer;
   background-color: rgb(162, 162, 6);
   color: black;
+  font-weight: bold;
+}
+
+.main-page-form input[type="submit"]:hover {
+  color: rgb(162, 162, 6);
+  background-color: black;
   font-weight: bold;
 }
