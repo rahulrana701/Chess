@@ -21,6 +21,7 @@ export default function page() {
     (state) => state.blacksSquarePostion
   );
 
+  const { assignedPiece } = useAppSelector((state) => state.whichPiece);
   const { players } = useAppSelector((state) => state.boardPlayers);
   const dispatch = useAppDispatch();
   const socket = UseSocket();
@@ -81,12 +82,22 @@ export default function page() {
   }
 
   useEffect(() => {
-    socket?.on("player-joined", ({ name, players, socketId }) => {
-      console.log(name);
+    socket?.on("player-joined", ({ players, socketId }) => {
       dispatch(addplayers(players));
       dispatch(updateSocketId(socketId));
+      if (players.length === 1) {
+        dispatch(updatewhoseturn({ player: players[0], color: "white" }));
+      } else if (players.length === 2) {
+        dispatch(updatewhoseturn({ player: players[1], color: "black" }));
+      }
     });
   }, []);
+
+  useEffect(() => {
+    if (assignedPiece) {
+      alert(assignedPiece);
+    }
+  }, [assignedPiece]);
 
   return (
     <div>
@@ -95,7 +106,9 @@ export default function page() {
         draggable={true}
         onSquareClick={onSquareClick}
       />
-      {players}
+      {players?.map((player: String, index: number) => (
+        <p key={index}>{player}</p>
+      ))}
       <h3>{whichturn}</h3>
     </div>
   );

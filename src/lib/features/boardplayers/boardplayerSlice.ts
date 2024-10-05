@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  players: null,
+  players: [] as string[],
 };
 
 const boardplayerSlice = createSlice({
@@ -9,7 +9,7 @@ const boardplayerSlice = createSlice({
   initialState,
   reducers: {
     addplayers: (state, action) => {
-      state.players= action.payload;
+      state.players = action.payload;
     },
   },
 });
