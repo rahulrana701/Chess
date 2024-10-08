@@ -15,6 +15,7 @@ export default function page() {
   const { roomId } = useAppSelector((state) => state.roomID);
   const dispatch = useAppDispatch();
   const router = useRouter();
+
   const handleChessRoom = async (e: any) => {
     e.preventDefault();
     if (roomId == "" || name == "") {
@@ -22,10 +23,12 @@ export default function page() {
       return;
     }
     socket?.emit("user-joined", { name, roomId });
-    socket?.on("cannot-join", (msg) => {
+
+    socket?.on("cannot-join", ({ msg }) => {
       alert(msg);
       router.push(`/main`);
     });
+
     router.push(`/board/${roomId}`);
   };
   return (

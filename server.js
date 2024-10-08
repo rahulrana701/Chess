@@ -6,12 +6,7 @@ const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = 3000;
 
-var rooms = {
-  [roomNumber]: {
-    Players: [],
-    roomId: roomNumber,
-  },
-};
+let rooms = {};
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 
@@ -38,25 +33,46 @@ app.prepare().then(() => {
         const msg =
           "You cannot join the game right as two players are already playing game in this room , please join some other room ";
         socket.emit("cannot-join", { msg });
+        return;
       }
 
       const playerExists = rooms[data.roomId].Players.includes(data.name);
       if (!playerExists) {
         rooms[data.roomId].Players.push(data.name);
-
+        socket.join(data.roomId);
         io.to(data.roomId).emit("player-joined", {
-          name: data.name,
           players: rooms[data.roomId].Players,
-          socketId: socket.id,
         });
       }
     });
 
-    
+    // MOVES
+    socket.on("new-move", ({ move, roomId }) => {
+      console.log(move);
+      console.log(roomId);
+      socket.to(roomId).emit("now-move", { move });
+    });
 
     // USER DISCONNECTED
     socket.on("disconnect", () => {
       console.log(`Socket ${socket.id} disconnected`);
+
+      const roomId = socket.roomId;
+
+      if (roomId && rooms[roomId]) {
+        rooms[roomId].Players = rooms[roomId].Players.filter(
+          (player) => player !== socket.id
+        );
+
+        if (rooms[roomId].Players.length === 0) {
+          delete rooms[roomId];
+        } else {
+          io.to(roomId).emit("player-left", {
+            players: rooms[roomId].Players,
+            socketId: socket.id,
+          });
+        }
+      }
     });
   });
 

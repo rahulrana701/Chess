@@ -1,18 +1,22 @@
 "use client";
 
-import Chessboard from "chessboardjsx";
 import React, { useEffect, useState } from "react";
 import { Chess, Square } from "chess.js";
 import { UseSocket } from "../../socketprovider";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useAppSelector } from "@/lib/hooks";
+import { useAppDispatch } from "@/lib/hooks";
 import { updateSquare } from "../../../lib/features/square/squareSlice";
 import { updatePosition } from "@/lib/features/position/positionSlice";
 import { updateblacksSquare } from "@/lib/features/blacksquare/blacksquareSlice";
 import { updatewhoseturn } from "@/lib/features/whoseturn/whoseturnSlice";
 import { addplayers } from "@/lib/features/boardplayers/boardplayerSlice";
-import { updateSocketId } from "@/lib/features/playersocketId/playersocketIdSlice";
+import { useParams } from "next/navigation";
+import { Chessboard } from "react-chessboard";
 
 export default function page() {
+  const socket = UseSocket();
+  const params = useParams();
+  const { roomId } = params;
   const [chess] = useState(new Chess());
   const { start } = useAppSelector((state) => state.position);
   var { whichturn } = useAppSelector((state) => state.whoseturn);
@@ -21,10 +25,9 @@ export default function page() {
     (state) => state.blacksSquarePostion
   );
 
-  const { assignedPiece } = useAppSelector((state) => state.whichPiece);
   const { players } = useAppSelector((state) => state.boardPlayers);
+
   const dispatch = useAppDispatch();
-  const socket = UseSocket();
 
   function onSquareClick(square: Square): void {
     const turn = chess.turn();
@@ -34,12 +37,16 @@ export default function page() {
       try {
         const move = chess.move({ from: selectedSquare, to: square });
         if (move) {
+          socket?.emit("new-move", { move, roomId });
+
           dispatch(updatePosition(chess.fen()));
+
           dispatch(
             updatewhoseturn(
               turn === "w" ? "IT IS BLACK'S TURN NOW" : "IT IS WHITE'S TURN NOW"
             )
           );
+
           if (turn === "w") {
             dispatch(updateSquare(null));
           } else {
@@ -82,33 +89,29 @@ export default function page() {
   }
 
   useEffect(() => {
-    socket?.on("player-joined", ({ players, socketId }) => {
-      dispatch(addplayers(players));
-      dispatch(updateSocketId(socketId));
-      if (players.length === 1) {
-        dispatch(updatewhoseturn({ player: players[0], color: "white" }));
-      } else if (players.length === 2) {
-        dispatch(updatewhoseturn({ player: players[1], color: "black" }));
-      }
+    const turns = chess.turn();
+    console.log(turns);
+    socket?.on("now-move", ({ move }) => {
+      console.log(move);
+      chess.move(move);
+      dispatch(updatePosition(chess.fen()));
+      dispatch(
+        updatewhoseturn(
+          turns === "w" ? "IT IS BLACK'S TURN NOW" : "IT IS WHITE'S TURN NOW"
+        )
+      );
     });
   }, []);
 
-  useEffect(() => {
-    if (assignedPiece) {
-      alert(assignedPiece);
-    }
-  }, [assignedPiece]);
-
   return (
     <div>
-      <Chessboard
-        position={start}
-        draggable={true}
-        onSquareClick={onSquareClick}
-      />
-      {players?.map((player: String, index: number) => (
-        <p key={index}>{player}</p>
-      ))}
+      <div style={{ width: "300px", height: "300px" }}>
+        <Chessboard position={start} onSquareClick={onSquareClick} />
+      </div>
+      {players &&
+        players.map((player: String, index: number) => (
+          <p key={index}>{player}</p>
+        ))}
       <h3>{whichturn}</h3>
     </div>
   );
