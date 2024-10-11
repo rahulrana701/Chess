@@ -24,10 +24,10 @@ app.prepare().then(() => {
       if (!rooms[data.roomId]) {
         rooms[data.roomId] = {
           Players: [],
+          roles: "",
           roomId: data.roomId,
         };
       }
-
       // NOT MORE THAT TWO USERS IN ONE ROOM
       if (rooms[data.roomId].Players.length >= 2) {
         const msg =
@@ -36,20 +36,44 @@ app.prepare().then(() => {
         return;
       }
 
-      const playerExists = rooms[data.roomId].Players.includes(data.name);
+      const playerExists = rooms[data.roomId].Players.includes({
+        socketId: socket.id,
+        name: data.name,
+      });
       if (!playerExists) {
         rooms[data.roomId].Players.push(data.name);
         socket.join(data.roomId);
+
+        if (rooms[data.roomId].Players.length === 1) {
+          rooms[data.roomId].roles = "white";
+        } else if (rooms[data.roomId].Players.length === 2) {
+          rooms[data.roomId].roles = "black";
+        }
+        console.log(rooms);
         io.to(data.roomId).emit("player-joined", {
+          id: socket.id,
           players: rooms[data.roomId].Players,
         });
+
+        setTimeout(() => {
+          socket.emit("new-role", {
+            roles: rooms[data.roomId].roles,
+          });
+        }, 3000);
       }
     });
 
     // MOVES
+    socket.on("white-checkmate", ({ msg, roomId }) => {
+      socket.to(roomId).emit("white-checkmate-reply", { msg });
+    });
+
+    socket.on("black-checkmate", ({ msg, roomId }) => {
+      socket.to(roomId).emit("black-checkmate-reply", { msg });
+    });
+
+
     socket.on("new-move", ({ move, roomId }) => {
-      console.log(move);
-      console.log(roomId);
       socket.to(roomId).emit("now-move", { move });
     });
 

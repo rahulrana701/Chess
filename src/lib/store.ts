@@ -7,7 +7,7 @@ import playernameReducer from "./features/playername/playernameSlice";
 import roomIdReducer from "./features/roomnumber/roomnumberSlice";
 import boardplayerReducer from "./features/boardplayers/boardplayerSlice";
 import playerSocketReducer from "./features/playersocketId/playersocketIdSlice";
-import whichpieceReducer from "./features/whichpiece/whichpieceSlice";
+import roleReducer from "./features/role/roleSlice";
 
 export const makeStore = () => {
   return configureStore({
@@ -20,7 +20,7 @@ export const makeStore = () => {
       roomID: roomIdReducer,
       boardPlayers: boardplayerReducer,
       SocketID: playerSocketReducer,
-      whichPiece: whichpieceReducer,
+      roles: roleReducer,
     },
   });
 };
