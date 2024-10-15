@@ -12,6 +12,7 @@ import { updatewhoseturn } from "@/lib/features/whoseturn/whoseturnSlice";
 import { useParams } from "next/navigation";
 import { Chessboard } from "react-chessboard";
 import "../../../../styles/board.css";
+import { useSession } from "next-auth/react";
 
 export default function page() {
   const socket = UseSocket();
@@ -30,9 +31,23 @@ export default function page() {
   const { players } = useAppSelector((state) => state.boardPlayers);
   const dispatch = useAppDispatch();
 
+  const session = useSession();
+
   const turn = chess.turn();
+
   function onSquareClick(square: Square): void {
     if (turn === "w" && role == "white" && selectedsquare != null) {
+      if (chess.isCheckmate()) {
+        alert("Black Player Got Checkmate So The Game Is Over ");
+        const blackcheckmatemessage =
+          "Black Player Got Checkmate So The Game Is Over";
+        socket?.emit("black-checkmate", { blackcheckmatemessage, roomId });
+        return;
+      }
+
+      if (chess.isCheck()) {
+        alert("Black player is in check");
+      }
       try {
         if (chess.isCheckmate()) {
           alert("White Player Got Checkmate So The Game Is Over ");
@@ -44,7 +59,6 @@ export default function page() {
 
         if (chess.isCheck()) {
           alert("White player is in check");
-          return;
         }
 
         const move = chess.move({ from: selectedsquare, to: square });
@@ -67,20 +81,18 @@ export default function page() {
     }
 
     if (turn === "b" && role == "black" && selectedBlacksSquare != null) {
+      if (chess.isCheckmate()) {
+        alert("Black Player Got Checkmate So The Game Is Over ");
+        const blackcheckmatemessage =
+          "Black Player Got Checkmate So The Game Is Over";
+        socket?.emit("black-checkmate", { blackcheckmatemessage, roomId });
+        return;
+      }
+
+      if (chess.isCheck()) {
+        alert("Black player is in check");
+      }
       try {
-        if (chess.isCheckmate()) {
-          alert("Black Player Got Checkmate So The Game Is Over ");
-          const blackcheckmatemessage =
-            "Black Player Got Checkmate So The Game Is Over";
-          socket?.emit("black-checkmate", { blackcheckmatemessage, roomId });
-          return;
-        }
-
-        if (chess.isCheck()) {
-          alert("Black player is in check");
-          return;
-        }
-
         const move = chess.move({ from: selectedBlacksSquare, to: square });
         if (move) {
           socket?.emit("new-move", { move, roomId });
@@ -146,22 +158,24 @@ export default function page() {
   }, []);
 
   return (
-    <div className="board">
-      <div style={{ width: "568px", height: "310px" }}>
-        <Chessboard position={start} onSquareClick={onSquareClick} />
-      </div>
-      <div className="board-content">
-        <h3 style={{ marginLeft: "10px" }}>{whichturn}</h3>
-        <h3 style={{ marginTop: "70px", marginBottom: "0px" }}>PLAYERS</h3>
-        <div className="board-players">
-          {players &&
-            players.map((player: String, index: number) => (
-              <h1 style={{ width: "100px" }} key={index}>
-                {player}
-              </h1>
-            ))}
+    session.data && (
+      <div className="board">
+        <div style={{ width: "568px", height: "310px" }}>
+          <Chessboard position={start} onSquareClick={onSquareClick} />
+        </div>
+        <div className="board-content">
+          <h3 style={{ marginLeft: "10px" }}>{whichturn}</h3>
+          <h3 style={{ marginTop: "70px", marginBottom: "0px" }}>PLAYERS</h3>
+          <div className="board-players">
+            {players &&
+              players.map((player: String, index: number) => (
+                <h1 style={{ width: "100px" }} key={index}>
+                  {player}
+                </h1>
+              ))}
+          </div>
         </div>
       </div>
-    </div>
+    )
   );
 }

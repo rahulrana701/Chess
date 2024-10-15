@@ -21,77 +21,52 @@ const handler = NextAuth({
         username: { label: "Username", type: "text" },
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
-        type: { label: "Type", type: "text" },
       },
       async authorize(credentials: Record<string, string> | undefined) {
         if (!credentials) {
           console.log("No credentials provided");
           return null;
         }
-        const { username, email, password, type } = credentials;
+        console.log(credentials);
+        const { username, email, password } = credentials;
 
-        if (type == "login") {
-          const main = async () => {
-            const loggedUser = await prisma.user.findUnique({
-              where: {
-                name: username,
-                email: email,
-              },
-            });
-            if (!loggedUser) {
-              alert("User not found please login correctly");
-              return;
-            }
-            const comparedPassword = bcrypt.compare(
-              password,
-              credentials.password
-            );
-            if (!comparedPassword) {
-              alert("please enter a correct password");
-              return;
-            }
+        // Check if the user exists
+        const loggedUser = await prisma.user.findUnique({
+          where: { email },
+        });
 
-            return {
-              id: loggedUser.id,
-              name: loggedUser.name,
-              email: loggedUser.email,
-            };
+        if (loggedUser) {
+          // Compare password if user exists
+          const isMatch = await bcrypt.compare(password, loggedUser.password);
+          if (!isMatch) {
+            console.log("Incorrect password");
+            return null;
+          }
+
+          return {
+            id: String(loggedUser.id),
+            name: loggedUser.name,
+            email: loggedUser.email,
           };
-          main();
         } else {
-          const signupfunction = async () => {
-            const signedupUser = await prisma.user.findUnique({
-              where: {
-                name: username,
-                email: email,
-              },
-            });
-            if (signedupUser) {
-              alert("user is already signed you should please login");
-              return;
-            }
-            const salt = await bcrypt.genSalt(10);
-            const newpassword = await bcrypt.hash(password, salt);
-            const signUser = await prisma.user.create({
-              data: {
-                name: username,
-                email: email,
-                password: newpassword,
-              },
-            });
-            if (!signUser) {
-              alert("some error occured, please try again");
-              return;
-            }
-            return {
-              id: signUser.id,
-              username: signUser.name,
-              email: signUser.email,
-            };
+          // Create new user if not found
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash(password, salt);
+
+          const newUser = await prisma.user.create({
+            data: {
+              name: username,
+              email: email,
+              password: hashedPassword,
+            },
+          });
+
+          return {
+            id: String(newUser.id),
+            name: newUser.name,
+            email: newUser.email,
           };
-          signupfunction();
         }
-        return null;
       },
     }),
   ],
@@ -100,10 +75,23 @@ const handler = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    async session({ session, token }) {
+    async jwt({ token, user }) {
       console.log(token);
+      if (user) {
+        token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
+      }
+      return token;
+    },
+    async session({ session, token }) {
       console.log(session);
-      session.user.id = token.sub;
+      if (session.user) {
+        session.user.id = token.id;
+        session.user.name = token.name;
+        session.user.email = token.email;
+      }
+
       return session;
     },
   },
