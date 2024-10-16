@@ -40,6 +40,7 @@ export default function page() {
             <div className="nav-logo">CHESS</div>
             <div className="navbar-button">
               <button onClick={() => signOut()}>LogOut</button>
+              <a href="/gamesdata">YourGameStats</a>
             </div>
           </div>
           <div className="main-page">
@@ -71,6 +72,7 @@ export default function page() {
             <div className="nav-logo">CHESS</div>
             <div className="navbar-button">
               <button onClick={() => signIn()}>SignIn</button>
+              <a href="/gamesdata">YourGameStats</a>
             </div>
           </div>
           <div className="main-page">

@@ -8,7 +8,7 @@ import roomIdReducer from "./features/roomnumber/roomnumberSlice";
 import boardplayerReducer from "./features/boardplayers/boardplayerSlice";
 import playerSocketReducer from "./features/playersocketId/playersocketIdSlice";
 import roleReducer from "./features/role/roleSlice";
-
+import gameReducer from "./features/game/gameSlice";
 export const makeStore = () => {
   return configureStore({
     reducer: {
@@ -21,6 +21,7 @@ export const makeStore = () => {
       boardPlayers: boardplayerReducer,
       SocketID: playerSocketReducer,
       roles: roleReducer,
+      games: gameReducer,
     },
   });
 };

@@ -13,17 +13,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Game{
-gameId Int @id @default(autoincrement()) 
-owner User  @relation(fields: [ownerId],references: [id])  
-ownerId Int
-gameresult GameResult[]
-}
+// model Game{
+// gameId Int @id @default(autoincrement()) 
+// owner User  @relation(fields: [ownerId],references: [id])  
+// ownerId Int
+// gameresult GameResult[]
+// }
 
 model GameResult{
   gameResultId Int @id @default(autoincrement())
-  games Game @relation(fields: [gameId],references: [gameId])
-  gameId Int
+  owner User  @relation(fields: [ownerId],references: [id])  
+  ownerId Int
   result String
   date DateTime
   
@@ -34,5 +34,5 @@ model User{
   name String
   email String @unique
   password String
-  games Game[]
+  games GameResult[]
 }

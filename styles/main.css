@@ -32,6 +32,15 @@
   margin-top: 0.7rem;
   margin-bottom: 0.7rem;
 }
+.navbar-button a {
+text-decoration: none;
+background-color: rgb(162, 162, 6);
+color: black;
+border: none;
+border-radius: 3px;
+padding: 3px 5px;
+cursor: pointer;
+}
 .navbar-button button {
   background-color: rgb(162, 162, 6);
   color: black;

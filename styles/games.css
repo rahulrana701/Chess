@@ -1,0 +1,22 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+.gamesdata {
+  min-height: calc(100vh - 46px);
+  max-height: calc(100vh - 46px);
+  overflow-y: auto;
+}
+.gamesdata::before {
+  position: absolute;
+  content: "";
+  background: url("https://github.com/user-attachments/assets/500e84b7-df51-4017-88db-14bd5b3498ec")
+    no-repeat center center/cover;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  opacity: 0.9;
+}
