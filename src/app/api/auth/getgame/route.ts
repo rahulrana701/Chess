@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const GET = async (req: NextRequest) => {
@@ -9,7 +9,7 @@ export const GET = async (req: NextRequest) => {
   }
   const gameData = await prisma.user.findMany({
     where: {
-      id: id,
+      id:id
     },
   });
   return NextResponse.json({ gameData });

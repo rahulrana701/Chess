@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
@@ -10,10 +10,10 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       message: "Please provide sufficient data to get saved",
     });
   }
-  const game = await prisma.gameresult.create({
+  const game = await prisma.gameResult.create({
     data: {
       result,
-      Id: id,
+      ownerId: id,
     },
   });
   if (!game) {
