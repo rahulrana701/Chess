@@ -24,12 +24,11 @@ export default function socketprovider({ children }: SocketProviderProps) {
     console.log(players);
     dispatch(addplayers(players));
     if (players.length === 1) {
-      alert(`${players[0]} is assigned with white piece`);
+      alert(`${players[0].name} is assigned with white piece`);
     } else if (players.length === 2) {
-      alert(`${players[1]} is assigned with black piece`);
+      alert(`${players[1].name} is assigned with black piece`);
     }
   });
-  
 
   return (
     <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>

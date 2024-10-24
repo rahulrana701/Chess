@@ -6,7 +6,6 @@ import whoseturnReducer from "./features/whoseturn/whoseturnSlice";
 import playernameReducer from "./features/playername/playernameSlice";
 import roomIdReducer from "./features/roomnumber/roomnumberSlice";
 import boardplayerReducer from "./features/boardplayers/boardplayerSlice";
-import playerSocketReducer from "./features/playersocketId/playersocketIdSlice";
 import roleReducer from "./features/role/roleSlice";
 import gameReducer from "./features/game/gameSlice";
 export const makeStore = () => {
@@ -19,7 +18,6 @@ export const makeStore = () => {
       playername: playernameReducer,
       roomID: roomIdReducer,
       boardPlayers: boardplayerReducer,
-      SocketID: playerSocketReducer,
       roles: roleReducer,
       games: gameReducer,
     },

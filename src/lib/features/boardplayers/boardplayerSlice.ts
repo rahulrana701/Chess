@@ -1,7 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+type playerData = {
+  id: string;
+  name: string;
+};
+
 const initialState = {
-  players: [] as string[],
+  players: [] as playerData[],
 };
 
 const boardplayerSlice = createSlice({

@@ -41,15 +41,15 @@ app.prepare().then(() => {
         name: data.name,
       });
       if (!playerExists) {
-        rooms[data.roomId].Players.push(data.name);
+        rooms[data.roomId].Players.push({ id: socket.id, name: data.name });
         socket.join(data.roomId);
+        socket.roomId = data.roomId;
 
         if (rooms[data.roomId].Players.length === 1) {
           rooms[data.roomId].roles = "white";
         } else if (rooms[data.roomId].Players.length === 2) {
           rooms[data.roomId].roles = "black";
         }
-        console.log(rooms);
         io.to(data.roomId).emit("player-joined", {
           id: socket.id,
           players: rooms[data.roomId].Players,
@@ -72,7 +72,6 @@ app.prepare().then(() => {
       socket.to(roomId).emit("black-checkmate-reply", { msg });
     });
 
-
     socket.on("new-move", ({ move, roomId }) => {
       socket.to(roomId).emit("now-move", { move });
     });
@@ -80,18 +79,17 @@ app.prepare().then(() => {
     // USER DISCONNECTED
     socket.on("disconnect", () => {
       console.log(`Socket ${socket.id} disconnected`);
-
       const roomId = socket.roomId;
 
       if (roomId && rooms[roomId]) {
         rooms[roomId].Players = rooms[roomId].Players.filter(
-          (player) => player !== socket.id
+          (player) => player.id !== socket.id
         );
 
         if (rooms[roomId].Players.length === 0) {
           delete rooms[roomId];
         } else {
-          io.to(roomId).emit("player-left", {
+          socket.to(roomId).emit("player-left", {
             players: rooms[roomId].Players,
             socketId: socket.id,
           });

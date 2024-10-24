@@ -14,6 +14,7 @@ import { Chessboard } from "react-chessboard";
 import "../../../../styles/board.css";
 import { useSession } from "next-auth/react";
 import axios from "axios";
+import { addplayers } from "@/lib/features/boardplayers/boardplayerSlice";
 
 export default function page() {
   const socket = UseSocket();
@@ -207,12 +208,22 @@ export default function page() {
         dispatch(updatewhoseturn("IT IS WHITE'S TURN NOW"));
       }
     });
+
+    socket?.on("player-left", ({ players }) => {
+      dispatch(addplayers(players));
+      const btnsave = document.getElementsByClassName("savegame-button");
+      alert("sorry the other player left the game you can join another room");
+      router.push("/");
+    });
   }, []);
 
   return (
     session.data && (
       <div className="board">
-        <div style={{ width: "568px", height: "310px" }}>
+        <div
+          className="board-style"
+          style={{ width: "568px", height: "310px" }}
+        >
           <Chessboard position={start} onSquareClick={onSquareClick} />
         </div>
         <div className="board-content">
@@ -220,9 +231,9 @@ export default function page() {
           <h3 style={{ marginTop: "70px", marginBottom: "0px" }}>PLAYERS</h3>
           <div className="board-players">
             {players &&
-              players.map((player: String, index: number) => (
+              players.map((player: any, index: number) => (
                 <h1 style={{ width: "100px" }} key={index}>
-                  {player}
+                  {player.name}
                 </h1>
               ))}
           </div>

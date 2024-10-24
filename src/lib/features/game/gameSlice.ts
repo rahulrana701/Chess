@@ -1,7 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+type data = {
+  resultofgame: string;
+  gamedate: Date;
+  resultId: number;
+  ownerId: number;
+};
+
 const initialState = {
-  gamesdata: [] as any[],
+  gamesdata: [] as data[],
 };
 
 const gameSlice = createSlice({

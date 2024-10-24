@@ -33,13 +33,13 @@
   margin-bottom: 0.7rem;
 }
 .navbar-button a {
-text-decoration: none;
-background-color: rgb(162, 162, 6);
-color: black;
-border: none;
-border-radius: 3px;
-padding: 3px 5px;
-cursor: pointer;
+  text-decoration: none;
+  background-color: rgb(162, 162, 6);
+  color: black;
+  border: none;
+  border-radius: 3px;
+  padding: 3px 5px;
+  cursor: pointer;
 }
 .navbar-button button {
   background-color: rgb(162, 162, 6);
@@ -123,4 +123,12 @@ cursor: pointer;
   color: rgb(162, 162, 6);
   background-color: black;
   font-weight: bold;
+}
+
+@media only screen and (max-width: 508px) {
+  .main-page-content {
+    width: 326px;
+    margin: auto;
+    padding-left: 0rem;
+  }
 }

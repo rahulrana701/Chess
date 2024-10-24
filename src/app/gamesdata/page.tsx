@@ -5,19 +5,19 @@ import { useAppSelector } from "@/lib/hooks";
 import { useAppDispatch } from "@/lib/hooks";
 import axios from "axios";
 import { updategamesdata } from "@/lib/features/game/gameSlice";
-import "../../../styles/games.css"
+import "../../../styles/games.css";
 
 export default function page() {
   const session = useSession();
   const dispatch = useAppDispatch();
-  const gamesdata = useAppSelector((state) => state.games);
+  const { gamesdata } = useAppSelector((state) => state.games);
 
   useEffect(() => {
     const fetchdata = async () => {
       const response = await axios.get("/api/auth/getgame", {
         headers: {
           "Content-Type": "application/json",
-          "id": session.data?.user.id,
+          id: session.data?.user.id,
         },
       });
       if (!response) {
@@ -28,7 +28,7 @@ export default function page() {
         alert(response.data.message);
         return;
       }
-      const { gameData } = response.data;
+      const gameData = response.data.User.games;
       dispatch(updategamesdata(gameData));
     };
 
