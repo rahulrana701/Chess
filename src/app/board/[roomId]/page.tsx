@@ -211,9 +211,8 @@ export default function page() {
 
     socket?.on("player-left", ({ players }) => {
       dispatch(addplayers(players));
-      const btnsave = document.getElementsByClassName("savegame-button");
       alert("sorry the other player left the game you can join another room");
-      router.push("/");
+      router.push("/main");
     });
   }, []);
 
