@@ -17,7 +17,7 @@ interface SocketProviderProps {
 let socket: Socket;
 
 export default function socketprovider({ children }: SocketProviderProps) {
-  const socket = io("http://localhost:3000");
+  const socket = io("https://chess-mulitplayer-game.vercel.app");
   const dispatch = useAppDispatch();
 
   socket?.on("player-joined", ({ players, id }) => {
