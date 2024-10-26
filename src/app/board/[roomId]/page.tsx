@@ -16,6 +16,18 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import { addplayers } from "@/lib/features/boardplayers/boardplayerSlice";
 
+interface User {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+}
+
+interface Session {
+  user: User;
+  expires: string;
+}
+
 export default function page() {
   const socket = UseSocket();
   const [role, setRole] = useState("");
@@ -34,8 +46,7 @@ export default function page() {
   const { players } = useAppSelector((state) => state.boardPlayers);
   const dispatch = useAppDispatch();
 
-  const session = useSession();
-
+  const { data } = useSession() as { data: Session | null };
   const turn = chess.turn();
 
   const handleEndGame = async () => {
@@ -48,7 +59,7 @@ export default function page() {
         "/api/auth/game",
         {
           result: "loss",
-          id: session?.data?.user.id,
+          id: data?.user.id,
         },
         {
           headers: {
@@ -65,7 +76,7 @@ export default function page() {
         "/api/auth/game",
         {
           result: "winn",
-          id: session?.data?.user.id,
+          id: data?.user.id,
         },
         {
           headers: {
@@ -217,7 +228,7 @@ export default function page() {
   }, []);
 
   return (
-    session.data && (
+    data && (
       <div className="board">
         <div
           className="board-style"

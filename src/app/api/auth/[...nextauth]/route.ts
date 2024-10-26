@@ -26,7 +26,6 @@ const handler = NextAuth({
           console.log("No credentials provided");
           return null;
         }
-        console.log(credentials);
         const { username, email, password } = credentials;
 
         // Check if the user exists
@@ -41,7 +40,6 @@ const handler = NextAuth({
             console.log("Incorrect password");
             return null;
           }
-
           return {
             id: String(loggedUser.id),
             name: loggedUser.name,
@@ -69,28 +67,23 @@ const handler = NextAuth({
       },
     }),
   ],
-
   session: {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
-      console.log(token);
+    jwt: async ({ user, token }: any) => {
       if (user) {
-        token.id = user.id;
+        token.uid = user.id;
         token.name = user.name;
         token.email = user.email;
       }
       return token;
     },
-    async session({ session, token }: any) {
-      console.log(session);
-      if (session.user) {
-        session.user.id = token.id;
-        session.user.name = token.name;
-        session.user.email = token.email;
+    session: async ({ session, token, user }: any) => {
+      if (session.user && token) {
+        session.user.id = token.uid;
       }
-
+      console.log("mysession", session);
       return session;
     },
   },

@@ -7,8 +7,19 @@ import axios from "axios";
 import { updategamesdata } from "@/lib/features/game/gameSlice";
 import "../../../styles/games.css";
 
+interface User {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+}
+
+interface Session {
+  user: User;
+  expires: string;
+}
 export default function page() {
-  const session = useSession();
+  const { data } = useSession() as { data: Session | null };
   const dispatch = useAppDispatch();
   const { gamesdata } = useAppSelector((state) => state.games);
 
@@ -17,7 +28,7 @@ export default function page() {
       const response = await axios.get("/api/auth/getgame", {
         headers: {
           "Content-Type": "application/json",
-          id: session.data?.user.id,
+          id: data?.user?.id,
         },
       });
       if (!response) {
@@ -36,7 +47,7 @@ export default function page() {
   }, []);
   return (
     <>
-      {session.data ? (
+      {data ? (
         <div className="gamesdata">
           {gamesdata ? (
             gamesdata.map((game: any, index: number) => (
