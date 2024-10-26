@@ -3,8 +3,10 @@ import next from "next";
 import { Server } from "socket.io";
 
 const dev = process.env.NODE_ENV !== "production";
-const hostname = "localhost";
-const port = 3000;
+// const hostname = "localhost"; development
+// const port = 3000; development
+const hostname = "chess-mulitplayer-game.vercel.app";
+const port = process.env.PORT;
 
 let rooms = {};
 const app = next({ dev, hostname, port });
