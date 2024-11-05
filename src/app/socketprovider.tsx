@@ -18,7 +18,7 @@ let socket: Socket;
 
 export default function socketprovider({ children }: SocketProviderProps) {
   // const socket = io("https://localhost:3000"); development
-  const socket = io("https://chess-5331.onrender.com");
+  const socket = io("https://chess-5331.onrender.com/");
   const dispatch = useAppDispatch();
 
   socket?.on("player-joined", ({ players, id }) => {
